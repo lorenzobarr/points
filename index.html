@@ -54,7 +54,24 @@
     .points-glide.positive {
       color: green;
     }
-       form {
+    .gain-effect {
+      background-color: #c8f7c5 !important;
+      transform: scale(1.05);
+      transition: background-color 0.4s ease, transform 0.4s ease;
+    }
+    .lose-effect {
+      background-color: #f7c5c5 !important;
+      animation: shake 0.4s;
+      transition: background-color 0.4s ease;
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+    form {
       max-width: 400px;
       margin: 0 auto;
     }
@@ -63,50 +80,19 @@
       margin: 5px;
       font-size: 1rem;
     }
-
-    /* Animation classes for background */
-    .gain {
-      animation: gainAnim 1s forwards;
-    }
-    .loss {
-      animation: lossAnim 1s forwards;
-    }
-
-    @keyframes gainAnim {
-      0% {
-        background-color: #d4edda; /* light green */
-        transform: scale(1.05);
-        box-shadow: 0 0 10px #28a745;
-      }
-      50% {
-        background-color: #a9dfbf; /* brighter green */
-        transform: scale(1.1);
-        box-shadow: 0 0 15px #28a745;
-      }
-      100% {
-        background-color: white;
-        transform: scale(1);
-        box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-      }
-    }
-
-    @keyframes lossAnim {
-      0% {
-        background-color: #f8d7da; /* light red */
-        transform: translateX(0);
-        box-shadow: 0 0 10px #dc3545;
-      }
-      20%, 60% {
-        transform: translateX(-10px);
-      }
-      40%, 80% {
-        transform: translateX(10px);
-      }
-      100% {
-        background-color: white;
-        transform: translateX(0);
-        box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-      }
+    #lead-popup {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #4CAF50;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      z-index: 1000;
+      font-size: 1.2em;
+      display: none;
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
