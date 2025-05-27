@@ -20,6 +20,7 @@
       max-width: 400px;
       margin: 0 auto 30px;
       text-align: left;
+      position: relative;
     }
     #leaderboard li {
       background: white;
@@ -30,11 +31,44 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: relative;
+      transition: all 0.5s ease;
     }
     #leaderboard li.top::before {
       content: "👑 ";
       font-size: 1.2em;
       margin-right: 5px;
+    }
+    .points-glide {
+      position: absolute;
+      left: calc(100% + 40px);
+      font-weight: bold;
+      opacity: 0;
+      transform: translateX(20px);
+      transition: all 0.8s ease-out;
+      pointer-events: none;
+    }
+    .points-glide.negative {
+      color: red;
+    }
+    .points-glide.positive {
+      color: green;
+    }
+    .gain-effect {
+      background-color: #d4edda;
+      transform: scale(1.05);
+      transition: background-color 0.4s ease, transform 0.4s ease;
+    }
+    .lose-effect {
+      background-color: #f8d7da;
+      animation: shake 0.4s;
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
     }
     form {
       max-width: 400px;
@@ -45,8 +79,22 @@
       margin: 5px;
       font-size: 1rem;
     }
+    #lead-popup {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #4CAF50;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      z-index: 1000;
+      font-size: 1.2em;
+      display: none;
+    }
   </style>
-  <!-- Firebase SDKs -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 </head>
@@ -54,10 +102,12 @@
   <h1>Key Sounds Leaderboard</h1>
   <ul id="leaderboard"></ul>
   <form id="addForm">
-    <input type="text" id="name" placeholder="Student Name" required />
+    <input type="text" id="name" placeholder="Student Name" maxlength="30" required />
     <input type="number" id="points" placeholder="Points" required />
     <button type="submit">Add / Update</button>
   </form>
+  <div id="lead-popup"></div>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAH_73hakekhphFdk3QaXUhExBlqBlAQdo",
@@ -76,6 +126,9 @@
 
     const form = document.getElementById('addForm');
     const leaderboardEl = document.getElementById('leaderboard');
+    const popup = document.getElementById('lead-popup');
+    let leaderboardData = {};
+    let currentLeader = null;
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
@@ -83,29 +136,182 @@
       const points = parseInt(document.getElementById('points').value);
       if (!name || isNaN(points)) return;
 
-      const userRef = leaderboardRef.child(name.toLowerCase());
+      const formattedName = name[0].toUpperCase() + name.slice(1).toLowerCase();
+      const key = formattedName.toLowerCase();
+
+      const userRef = leaderboardRef.child(key);
       userRef.once('value').then(snapshot => {
         const existing = snapshot.val();
         const newPoints = (existing?.points || 0) + points;
-        userRef.set({ name, points: newPoints });
+        userRef.set({ name: formattedName, points: newPoints });
         form.reset();
       });
     });
 
     leaderboardRef.on('value', snapshot => {
       const data = snapshot.val() || {};
-      const list = Object.values(data).sort((a, b) => b.points - a.points);
-      renderLeaderboard(list);
+      leaderboardData = data;
+      animateReorder();
     });
 
-    function renderLeaderboard(list) {
-      leaderboardEl.innerHTML = '';
-      list.forEach((entry, index) => {
-        const li = document.createElement('li');
-        li.className = index === 0 ? 'top' : '';
-        li.innerHTML = `<strong>${entry.name}</strong> <span>${entry.points} pts</span>`;
-        leaderboardEl.appendChild(li);
+    function animateReorder() {
+      const oldList = Array.from(leaderboardEl.children);
+      const oldPositions = {};
+
+      oldList.forEach(li => {
+        const rect = li.getBoundingClientRect();
+        oldPositions[li.querySelector('strong').textContent.toLowerCase()] = rect;
       });
+
+      renderLeaderboard();
+
+      requestAnimationFrame(() => {
+        const newList = Array.from(leaderboardEl.children);
+
+        newList.forEach(li => {
+          const key = li.querySelector('strong').textContent.toLowerCase();
+          const oldRect = oldPositions[key];
+          if (!oldRect) return;
+
+          const newRect = li.getBoundingClientRect();
+          const dy = oldRect.top - newRect.top;
+
+          if (dy !== 0) {
+            li.style.transform = `translateY(${dy}px)`;
+            requestAnimationFrame(() => {
+              li.style.transition = 'transform 0.6s ease';
+              li.style.transform = '';
+            });
+          }
+        });
+      });
+    }
+
+    function renderLeaderboard() {
+      const list = Object.values(leaderboardData).sort((a, b) => b.points - a.points || a.name.localeCompare(b.name));
+      const newLeader = list[0]?.name;
+      if (newLeader && newLeader !== currentLeader) {
+        currentLeader = newLeader;
+        showLeadPopup(newLeader);
+        triggerConfetti();
+      }
+
+      const existingItems = {};
+      leaderboardEl.querySelectorAll('li').forEach(li => {
+        const name = li.querySelector('strong').textContent.toLowerCase();
+        existingItems[name] = li;
+      });
+
+      const newList = [];
+
+      list.forEach((entry, index) => {
+        const key = entry.name.toLowerCase();
+        let li = existingItems[key];
+        const prevPoints = li ? parseInt(li.querySelector('span')?.dataset.points || 0) : 0;
+
+        if (!li) {
+          li = document.createElement('li');
+          li.innerHTML = `<strong>${entry.name}</strong> <span data-points="0">0 pts</span>`;
+        } else {
+          li = li.cloneNode(true);
+        }
+
+        li.className = index === 0 ? 'top' : '';
+        const span = li.querySelector('span');
+        const currentPoints = entry.points;
+        const diff = currentPoints - prevPoints;
+
+        if (diff !== 0) {
+          const glide = document.createElement('div');
+          glide.className = `points-glide ${diff < 0 ? 'negative' : 'positive'}`;
+          glide.textContent = `${diff > 0 ? '+' : ''}${diff}`;
+          li.appendChild(glide);
+
+          requestAnimationFrame(() => {
+            glide.style.opacity = 1;
+            glide.style.transform = 'translateX(0)';
+          });
+
+          setTimeout(() => {
+            glide.style.opacity = 0;
+            glide.style.transform = 'translateX(-20px)';
+          }, 800);
+
+          setTimeout(() => glide.remove(), 1600);
+
+          if (diff > 0) {
+            li.classList.add('gain-effect');
+            setTimeout(() => li.classList.remove('gain-effect'), 600);
+          } else {
+            li.classList.add('lose-effect');
+            setTimeout(() => li.classList.remove('lose-effect'), 600);
+          }
+
+          animatePoints(span, prevPoints, currentPoints);
+        } else {
+          span.textContent = `${currentPoints} pts`;
+          span.dataset.points = currentPoints;
+        }
+
+        newList.push(li);
+      });
+
+      leaderboardEl.innerHTML = '';
+      newList.forEach(li => leaderboardEl.appendChild(li));
+    }
+
+    function animatePoints(span, from, to) {
+      const duration = 1000;
+      const start = performance.now();
+      span.dataset.points = from;
+
+      function update(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = easeOutExpo(progress);
+        const current = Math.round(from + (to - from) * eased);
+        span.textContent = `${current} pts`;
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        } else {
+          span.dataset.points = to;
+        }
+      }
+
+      requestAnimationFrame(update);
+    }
+
+    function easeOutExpo(t) {
+      return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+    }
+
+    function showLeadPopup(name) {
+      popup.textContent = `${name} is on the lead! 🎉`;
+      popup.style.display = 'block';
+      setTimeout(() => popup.style.display = 'none', 5000);
+    }
+
+    function triggerConfetti() {
+      const duration = 4000;
+      const end = Date.now() + duration;
+
+      (function frame() {
+        confetti({
+          particleCount: 5,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 }
+        });
+        confetti({
+          particleCount: 5,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 }
+        });
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      })();
     }
   </script>
 </body>
