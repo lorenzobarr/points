@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2487.7">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"/&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;Key Sounds Leaderboard&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>body {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-family: Arial, sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>background: #f4f4f4;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>text-align: center;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>padding: 30px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>h1 {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>color: #333;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>#leaderboard {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>list-style-type: none;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>padding: 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>max-width: 400px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>margin: 0 auto 30px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>text-align: left;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>#leaderboard li {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>background: white;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>padding: 10px 15px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>margin: 5px 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 5px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>box-shadow: 0 1px 4px rgba(0,0,0,0.1);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>justify-content: space-between;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>#leaderboard li.top::before {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>content: "👑 ";</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-size: 1.2em;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>margin-right: 5px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>form {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>max-width: 400px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>margin: 0 auto;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>input, button {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>padding: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>margin: 5px;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-size: 1rem;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- Firebase SDKs --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"&gt;&lt;/script&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;h1&gt;Key Sounds Leaderboard&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;ul id="leaderboard"&gt;&lt;/ul&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;form id="addForm"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;input type="text" id="name" placeholder="Student Name" required /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;input type="number" id="points" placeholder="Points" required /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button type="submit"&gt;Add / Update&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/form&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const firebaseConfig = {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>apiKey: "AIzaSyAH_73hakekhphFdk3QaXUhExBlqBlAQdo",</p>
+<p class="p1"><span class="Apple-converted-space">      </span>authDomain: "key-sounds-leaderboard.firebaseapp.com",</p>
+<p class="p1"><span class="Apple-converted-space">      </span>databaseURL: "https://key-sounds-leaderboard-default-rtdb.firebaseio.com",</p>
+<p class="p1"><span class="Apple-converted-space">      </span>projectId: "key-sounds-leaderboard",</p>
+<p class="p1"><span class="Apple-converted-space">      </span>storageBucket: "key-sounds-leaderboard.appspot.com",</p>
+<p class="p1"><span class="Apple-converted-space">      </span>messagingSenderId: "734919454757",</p>
+<p class="p1"><span class="Apple-converted-space">      </span>appId: "1:734919454757:web:67013d154826b93aa4cfcc",</p>
+<p class="p1"><span class="Apple-converted-space">      </span>measurementId: "G-8LKH8KEJWX"</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>firebase.initializeApp(firebaseConfig);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const db = firebase.database();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const leaderboardRef = db.ref("leaderboard");</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const form = document.getElementById('addForm');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const leaderboardEl = document.getElementById('leaderboard');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>form.addEventListener('submit', function(e) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>e.preventDefault();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const name = document.getElementById('name').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const points = parseInt(document.getElementById('points').value);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!name || isNaN(points)) return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const userRef = leaderboardRef.child(name.toLowerCase());</p>
+<p class="p1"><span class="Apple-converted-space">      </span>userRef.once('value').then(snapshot =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const existing = snapshot.val();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const newPoints = (existing?.points || 0) + points;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>userRef.set({ name, points: newPoints });</p>
+<p class="p1"><span class="Apple-converted-space">        </span>form.reset();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>leaderboardRef.on('value', snapshot =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const data = snapshot.val() || {};</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const list = Object.values(data).sort((a, b) =&gt; b.points - a.points);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderLeaderboard(list);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function renderLeaderboard(list) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>leaderboardEl.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>list.forEach((entry, index) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const li = document.createElement('li');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>li.className = index === 0 ? 'top' : '';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>li.innerHTML = `&lt;strong&gt;${entry.name}&lt;/strong&gt; &lt;span&gt;${entry.points} pts&lt;/span&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>leaderboardEl.appendChild(li);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
